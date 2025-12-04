@@ -214,7 +214,12 @@ public class Expression {
                     output.push(func.getFunction().apply(args));
                 } else {
                     /* if numArguments equals -1 ignore validation of number of itens */
-                    return output.pop();
+                    int size = output.size();
+                    double[] args = new double[size];
+                    for (int j = size - 1; j >= 0; j--) {
+                        args[j] = output.pop();
+                    }
+                    output.push(func.getFunction().apply(args));
                 }
             }
         }

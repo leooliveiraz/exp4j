@@ -16,6 +16,7 @@
 package net.objecthunter.exp4j;
 
 import net.objecthunter.exp4j.function.Function;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -184,7 +185,7 @@ public class FunctionsTest {
 
     @Test
     public void testingFunctionWithoutMaxArguments() {
-        Expression e = new ExpressionBuilder("max(5,7,8,9,10,6,3,77)")
+        Expression e = new ExpressionBuilder("max(5,7,8,9,10,66,3,7)")
                 .function(new Function("max", -1) {
                     public double apply(double... args) {
                         double biggest = args[0];
@@ -197,6 +198,26 @@ public class FunctionsTest {
                     }
                 })
                 .build();
+        double v = e.evaluate();
+        assertEquals(66, v, 0.0);
+    }
+    @Test
+    public void testingFunctionWithoutMaxArguments2() {
+        Expression e = new ExpressionBuilder("min(5,7,8,9,10,66,3,7)")
+                .function(new Function("min", -1) {
+                    public double apply(double... args) {
+                        double lowest = args[0];
+                        for (int i = 1; i < args.length; i++) {
+                            if (args[i] < lowest) {
+                                lowest = args[i];
+                            }
+                        }
+                        return lowest;
+                    }
+                })
+                .build();
+        double v = e.evaluate();
+        assertEquals(3, v, 0.0);
     }
 
 }
