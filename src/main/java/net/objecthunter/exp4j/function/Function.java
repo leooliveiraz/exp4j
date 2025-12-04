@@ -32,7 +32,7 @@ public abstract class Function {
      * @param numArguments the number of arguments the function takes
      */
     public Function(String name, int numArguments) {
-        if (numArguments < 0) {
+        if (numArguments < -1) {
             throw new IllegalArgumentException("The number of function arguments can not be less than 0 for '" +
                     name + "'");
         }

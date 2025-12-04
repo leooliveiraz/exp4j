@@ -73,7 +73,8 @@ public class Expression {
 
     private void checkVariableName(String name) {
         if (this.userFunctionNames.contains(name) || Functions.getBuiltinFunction(name) != null) {
-            throw new IllegalArgumentException("The variable name '" + name + "' is invalid. Since there exists a function with the same name");
+            throw new IllegalArgumentException("The variable name '" + name
+                    + "' is invalid. Since there exists a function with the same name");
         }
     }
 
@@ -92,8 +93,9 @@ public class Expression {
     public Set<String> getVariableNames() {
         final Set<String> variables = new HashSet<>();
         for (final Token t : tokens) {
-            if (t.getType() == Token.TOKEN_VARIABLE)
+            if (t.getType() == Token.TOKEN_VARIABLE) {
                 variables.add(((VariableToken) t).getName());
+            }
         }
         return variables;
     }
@@ -174,13 +176,16 @@ public class Expression {
                 final String name = ((VariableToken) t).getName();
                 final Double value = this.variables.get(name);
                 if (value == null) {
-                    throw new IllegalArgumentException("No value has been set for the setVariable '" + name + "'.");
+                    throw new IllegalArgumentException(
+                            "No value has been set for the setVariable '" + name + "'.");
                 }
                 output.push(value);
             } else if (t.getType() == Token.TOKEN_OPERATOR) {
                 OperatorToken op = (OperatorToken) t;
                 if (output.size() < op.getOperator().getNumOperands()) {
-                    throw new IllegalArgumentException("Invalid number of operands available for '" + op.getOperator().getSymbol() + "' operator");
+                    throw new IllegalArgumentException(
+                            "Invalid number of operands available for '" + op.getOperator().getSymbol()
+                                    + "' operator");
                 }
                 if (op.getOperator().getNumOperands() == 2) {
                     /* pop the operands and push the result of the operation */
@@ -196,18 +201,26 @@ public class Expression {
                 FunctionToken func = (FunctionToken) t;
                 final int numArguments = func.getFunction().getNumArguments();
                 if (output.size() < numArguments) {
-                    throw new IllegalArgumentException("Invalid number of arguments available for '" + func.getFunction().getName() + "' function");
+                    throw new IllegalArgumentException(
+                            "Invalid number of arguments available for '" + func.getFunction().getName()
+                                    + "' function");
                 }
                 /* collect the arguments from the stack */
-                double[] args = new double[numArguments];
-                for (int j = numArguments - 1; j >= 0; j--) {
-                    args[j] = output.pop();
+                if (numArguments > -1) {
+                    double[] args = new double[numArguments];
+                    for (int j = numArguments - 1; j >= 0; j--) {
+                        args[j] = output.pop();
+                    }
+                    output.push(func.getFunction().apply(args));
+                } else {
+                    /* if numArguments equals -1 ignore validation of number of itens */
+                    return output.pop();
                 }
-                output.push(func.getFunction().apply(args));
             }
         }
         if (output.size() > 1) {
-            throw new IllegalArgumentException("Invalid number of items on the output queue. Might be caused by an invalid number of arguments for a function.");
+            throw new IllegalArgumentException(
+                    "Invalid number of items on the output queue. Might be caused by an invalid number of arguments for a function.");
         }
         return output.pop();
     }

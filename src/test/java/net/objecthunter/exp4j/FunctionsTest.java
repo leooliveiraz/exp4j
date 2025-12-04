@@ -56,7 +56,7 @@ public class FunctionsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testFunctionNameNegativeArgs() {
-        Function f = new Function("foo", -1) {
+        Function f = new Function("foo", -2) {
             @Override
             public double apply(double... args) {
                 return 0;
@@ -181,4 +181,22 @@ public class FunctionsTest {
         assertFalse(Function.isValidFunctionName("perc%"));
         assertFalse(Function.isValidFunctionName("del$a"));
     }
+
+    @Test
+    public void testingFunctionWithoutMaxArguments() {
+        Expression e = new ExpressionBuilder("max(5,7,8,9,10,6,3,77)")
+                .function(new Function("max", -1) {
+                    public double apply(double... args) {
+                        double biggest = args[0];
+                        for (int i = 1; i < args.length; i++) {
+                            if (args[i] > biggest) {
+                                biggest = args[i];
+                            }
+                        }
+                        return biggest;
+                    }
+                })
+                .build();
+    }
+
 }
